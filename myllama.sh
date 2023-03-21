@@ -27,15 +27,16 @@ wget ${PRESIGNED_URL/'*'/"tokenizer_checklist.chk"} -O ${TARGET_FOLDER}"/tokeniz
 for i in ${MODEL_SIZE//,/ }
 do
     echo "Downloading ${i}"
-    
-    if [ "$1" -gt 1 ]; then   # Check if $1 is greater than 1
-        mkdir -p ${TARGET_FOLDER}"/${i}"
-         for s in $(seq -f "0%g" 0 ${N_SHARD_DICT[$i]})
+     for s in $(seq -f "0%g" 0 ${N_SHARD_DICT[$i]})
         do
-            wget ${PRESIGNED_URL/'*'/"${i}/consolidated.${s}.pth"} -c -O ${TARGET_FOLDER}"/${i}/consolidated.${s}.pth"
+          if [ "$s" -gt 1 ]; then   # Check if s is greater than 1
+            wget ${PRESIGNED_URL/'*'/"${i}/consolidated.${s}.pth"} -O ${TARGET_FOLDER}"/${i}/consolidated.${s}.pth"
+          fi
         done
-    fi
 
+   
+         
+       
     wget ${PRESIGNED_URL/'*'/"${i}/params.json"} -O ${TARGET_FOLDER}"/${i}/params.json"
     wget ${PRESIGNED_URL/'*'/"${i}/checklist.chk"} -O ${TARGET_FOLDER}"/${i}/checklist.chk"
     echo "Checking checksums"
